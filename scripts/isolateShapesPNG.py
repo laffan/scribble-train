@@ -2,8 +2,11 @@ import cv2
 import os
 import numpy as np
 
-def isolateShapes(sheetDirectory, shapesDirectory, filename, category):
+def isolateShapesPNG(sheetDirectory, shapesDirectory, filename):
   
+    # For now we're just using the file name *as* the category
+    category=filename
+    
     # Load the image
     original_image = cv2.imread(os.path.join(sheetDirectory, filename + ".png"), cv2.IMREAD_UNCHANGED)
 

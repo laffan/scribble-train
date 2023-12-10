@@ -2,18 +2,19 @@ from PIL import Image, ImageDraw, ImageOps
 import os
 import random
 
-def generateData(categories, generatedDataDirectory, numberOfImages, width, height):
+def generateDataPNG(categories, generated_count, generated_width, generated_height):
+    outputDir = "output/generated"
     # Ensure the output directory exists
-    if not os.path.exists(generatedDataDirectory):
-        os.makedirs(generatedDataDirectory)
+    if not os.path.exists(outputDir):
+        os.makedirs(outputDir)
 
     padding = 100  # Padding on all sides
-    effective_width = width - 2 * padding
-    effective_height = height - 2 * padding
+    effective_width = generated_width - 2 * padding
+    effective_height = generated_width - 2 * padding
 
-    for img_num in range(numberOfImages):
+    for img_num in range(generated_count):
         # Create a white canvas
-        canvas = Image.new('RGBA', (width, height), 'white')
+        canvas = Image.new('RGBA', (generated_width, generated_height), 'white')
 
         # Decide how many shapes to use in this image (3 to 10)
         num_shapes = random.randint(3, 6)
@@ -42,8 +43,8 @@ def generateData(categories, generatedDataDirectory, numberOfImages, width, heig
             shape = shape.rotate(angle, expand=True)
 
             # Random position within the effective area
-            x_max = max(width - shape.width - padding, padding)
-            y_max = max(height - shape.height - padding, padding)
+            x_max = max(generated_width - shape.width - padding, padding)
+            y_max = max(generated_height - shape.height - padding, padding)
 
             # Ensure there's space to place the shape
             if x_max <= padding or y_max <= padding:
@@ -57,7 +58,7 @@ def generateData(categories, generatedDataDirectory, numberOfImages, width, heig
 
         # Save the generated image
         canvas = canvas.convert("RGB")  # Convert to RGB if saving as JPEG
-        canvas.save(os.path.join(generatedDataDirectory, f'generated_img_{img_num}.jpg'))
+        canvas.save(os.path.join(outputDir, f'img_{img_num}.jpg'))
 
 # Example usage
 # categories = [...] # Your categories data

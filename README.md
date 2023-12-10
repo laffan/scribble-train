@@ -6,4 +6,17 @@ To be used in conjunction with [this tutorial video](https://www.youtube.com/wat
 
 ## Installation
 
-`pip3 install opencv-python`
+`brew install cairo`
+
+(If you run in to a "can't find cairo" error, you may need to run the following : )
+
+`sudo cp /opt/homebrew/Cellar/cairo/{YOUR CAIRO VERSION}/lib/libcairo.2.dylib /usr/local/lib`
+
+Then 
+
+`pip3 install opencv-python et-xmlfile cairosvg`
+
+
+## Currently
+
+- 🚨🚨🚨 Adding SVG support, but *keep the raster version*. Will be useful for other projects.
