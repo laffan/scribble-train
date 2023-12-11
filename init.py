@@ -5,7 +5,7 @@ from scripts.isolateShapesSVG import isolateShapesSVG
 from scripts.generateDataPNG import generateDataPNG
 from scripts.generateDataSVG import generateDataSVG
 
-generated_count = 3
+generated_count = 1
 generated_width = 1000
 generated_height = 720
 
@@ -55,7 +55,6 @@ def generate( type ):
                 'images': images
             })
 
-    print(categories)
     if ( type == "png"):
       generateDataPNG(categories, generated_count, generated_width, generated_height)
     else:

@@ -1,0 +1,35 @@
+<annotation>
+    <folder>images</folder>
+    <filename>img_0.png</filename>
+    <size>
+        <width>1000</width>
+        <height>720</height>
+        <depth>3</depth>
+    </size>
+    <object>
+        <name>path</name>
+        <pose>Unspecified</pose>
+        <truncated>0</truncated>
+        <occluded>0</occluded>
+        <difficult>0</difficult>
+        <bndbox>
+            <xmin>287.713013</xmin>
+            <ymin>359.501373</ymin>
+            <xmax>799.201050</xmax>
+            <ymax>720.000000</ymax>
+        </bndbox>
+    </object>
+    <object>
+        <name>box</name>
+        <pose>Unspecified</pose>
+        <truncated>0</truncated>
+        <occluded>0</occluded>
+        <difficult>0</difficult>
+        <bndbox>
+            <xmin>500.500000</xmin>
+            <ymin>506.297211</ymin>
+            <xmax>641.359009</xmax>
+            <ymax>646.102783</ymax>
+        </bndbox>
+    </object>
+</annotation>

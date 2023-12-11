@@ -31,6 +31,11 @@ def scale_path_d(d_attr, scale_factor):
     return re.sub(r"[-+]?\d*\.?\d+|\d+", lambda match: scaled_numbers.pop(0), d_attr, len(scaled_numbers))
 
 def rasterize_svg(svg_path, png_output_path):
+  
+    # Hideous workaround because I can't figure out how to move paths 
+    # to origin. Instead I'm just rasterizing and enormous canvas and 
+    # then removing transparent pixels 
+  
     try:
         # Parse the SVG file
         tree = ET.parse(svg_path)
@@ -64,17 +69,24 @@ def set_svg_stroke(svg_path, stroke_width=2, stroke_color="black"):
     except Exception as e:
         print(f"An error occurred: {e}")
         
-def combine_images(output_png_path, images_info):
+def combine_images(output_png_path, images_info, generated_width, generated_height):
     # Assuming images_info is a list of tuples: (image_path, position, rotation)
-    base_image = Image.new('RGBA', (800, 600), 'white')  # Adjust size as needed
+    base_image = Image.new('RGBA', (generated_width, generated_height), 'white')  # Adjust size as needed
 
     for img_info in images_info:
-        img_path, position, rotation = img_info
+        category_name, img_path, position, size = img_info
         with Image.open(img_path) as img:
-            img = img.rotate(rotation, expand=True)
+            # img = img.rotate(rotation, expand=True)
             base_image.paste(img, position, img)
 
     base_image.save(output_png_path)
+
+def delete_temp_images(images_info):
+    # Assuming images_info is a list of tuples: (image_path, position, rotation)
+    for img_info in images_info:
+        category_name, img_path, position, size = img_info
+        os.remove(img_path) # delete temp png
+
 
 
 def trim_transparency(png_path):
@@ -87,10 +99,46 @@ def trim_transparency(png_path):
             img.save(png_path)
     except Exception as e:
         print(f"An error occurred: {e}")
-  
+
+def create_xml(output_xml_path, padding, images_info,  generated_width, generated_height):
+    annotation = ET.Element('annotation')
+    
+    # Add folder and filename elements
+    ET.SubElement(annotation, 'folder').text = 'images'
+    ET.SubElement(annotation, 'filename').text = os.path.basename(output_xml_path).replace('.xml', '.png')
+
+    # Add size element
+    size = ET.SubElement(annotation, 'size')
+    ET.SubElement(size, 'width').text = str(generated_width)
+    ET.SubElement(size, 'height').text = str(generated_height)
+    ET.SubElement(size, 'depth').text = '3'
+
+    for category_name, img_path, position, size in images_info:
+        object_elem = ET.SubElement(annotation, 'object')
+
+        ET.SubElement(object_elem, 'name').text = category_name
+        ET.SubElement(object_elem, 'pose').text = 'Unspecified'
+        ET.SubElement(object_elem, 'truncated').text = '0'
+        ET.SubElement(object_elem, 'occluded').text = '0'
+        ET.SubElement(object_elem, 'difficult').text = '0'
+
+        bndbox = ET.SubElement(object_elem, 'bndbox')
+        x_offset, y_offset = position
+        img_width, img_height = size
+
+        ET.SubElement(bndbox, 'xmin').text = str(x_offset)
+        ET.SubElement(bndbox, 'ymin').text = str(y_offset)
+        ET.SubElement(bndbox, 'xmax').text = str(x_offset + img_width)
+        ET.SubElement(bndbox, 'ymax').text = str(y_offset + img_height)
+
+    # Write the tree to an XML file
+    tree = ET.ElementTree(annotation)
+    tree.write(output_xml_path)
+    
         
 def generateDataSVG(categories, generated_count, generated_width, generated_height):
     outputDir = "output/generated"
+    
     if not os.path.exists(outputDir):
         os.makedirs(outputDir)
 
@@ -102,8 +150,9 @@ def generateDataSVG(categories, generated_count, generated_width, generated_heig
         images_info = []  # To store info about each image to combine
 
         for _ in range(random.randint(3, 6)):  # Decide how many shapes to use in this image
-            category = random.choice(categories)
-            svg_path = random.choice(category['images'])  # Select a random SVG path
+            selectedCategory = random.choice(categories)
+            category_name = selectedCategory['category']
+            svg_path = random.choice(selectedCategory['images'])  # Select a random SVG path
 
             scaled_svg_path = os.path.join(outputDir, f'scaled_{img_num}_{_}.svg')
             png_path = os.path.join(outputDir, f'rasterized_{img_num}_{_}.png')
@@ -117,16 +166,25 @@ def generateDataSVG(categories, generated_count, generated_width, generated_heig
                 trim_transparency(png_path) # Remove transparent pixels
 
                 # # Random rotation and position
-                # angle = random.randint(0, 360)
-                # x_offset = random.randint(padding, effective_width)
-                # y_offset = random.randint(padding, effective_height)
+                angle = random.randint(0, 360)
+                x_offset = random.randint(padding, effective_width)
+                y_offset = random.randint(padding, effective_height)
+                width, height = Image.open(png_path).size
 
-                # images_info.append((png_path, (x_offset, y_offset), angle))
+                images_info.append(( category_name, png_path, (x_offset, y_offset), ( width, height)))
+                
                 
             except Exception as e:
                 print(f"Error processing SVG {svg_path}: {e}")
                 continue
 
-        # output_png_path = os.path.join(outputDir, f'img_{img_num}.png')
-        # combine_images(output_png_path, images_info)
+        output_png_path = os.path.join(outputDir, f'img_{img_num}.png')
+        output_xml_path = os.path.join(outputDir, f'img_{img_num}.xml')
+        
+        combine_images(output_png_path, images_info, generated_width, generated_height)
+        
+        create_xml( output_xml_path, padding, images_info,  generated_width, generated_height )
+
+        delete_temp_images(images_info)        
+        
 
