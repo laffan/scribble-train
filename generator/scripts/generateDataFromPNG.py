@@ -8,9 +8,7 @@ with open('config.json', 'r') as f:
     config = json.load(f)
 
 def generateDataFromPNG(categories, isValidationPass=False ):
-  
-    print("IS THIS THE FALIDATION PASS", isValidationPass)
-    
+      
     padding = config["output"]["padding"]  # Padding on all sides
     effective_width = config['output']['width'] - 2 * padding
     effective_height = config['output']['height'] - 2 * padding
@@ -88,4 +86,4 @@ def generateDataFromPNG(categories, isValidationPass=False ):
         # Save the generated image
         canvas = canvas.convert("RGB")  # Convert to RGB if saving as JPEG
         canvas.save(os.path.join(output_img_dir, f'{output_filename}.jpg'))
-
+0

@@ -1,6 +1,6 @@
 {
   "formats": {
-    "input": "png",
+    "input": "svg",
     "output": "jpg"
   },
   "paths": {
@@ -18,6 +18,6 @@
   },
   "options": {
     "separateAnnotationFolder": true,
-    "includeValidationSet": true
+    "includeValidationSet": false
   }
 }

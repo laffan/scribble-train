@@ -7,12 +7,10 @@ with open('config.json', 'r') as f:
 
 def extractShapesFromSVG( filename ):
     """
-    Isolates any shapes surrounded by transparent pixels and exports it individually to a folder that has the name of the original file.
+    Exports top level groups to a folder that has the name of the original file.
 
     """
-    # For now we're just using the file name *as* the category
-    category=filename
-    
+        
     # Load the image
     tree = ET.parse(os.path.join(config['paths']['input'], "svg", filename + ".svg"))
     root = tree.getroot()
