@@ -3,7 +3,6 @@ import re
 import random
 import cairosvg
 from PIL import Image
-from xml.etree import ElementTree as ET
 
 def scale_svg(input_svg_path, output_svg_path, scale_factor):
     try:
@@ -33,7 +32,7 @@ def scale_path_d(d_attr, scale_factor):
 def rasterize_svg(svg_path, png_output_path):
   
     # Hideous workaround because I can't figure out how to move paths 
-    # to origin. Instead I'm just rasterizing and enormous canvas and 
+    # to origin. Instead I'm just rasterizing an enormous canvas and 
     # then removing transparent pixels 
   
     try:
@@ -42,7 +41,7 @@ def rasterize_svg(svg_path, png_output_path):
         root = tree.getroot()
 
         # Set a large viewBox
-        root.set('viewBox', '0 0 5000 5000')
+        root.set('viewBox', '0 0 4000 4000')
 
         # Save the modified SVG temporarily
         temp_svg_path = 'temp.svg'
@@ -85,8 +84,6 @@ def delete_temp_images(images_info):
         category_name, img_path, position, size = img_info
         os.remove(img_path) # delete temp png
 
-
-
 def trim_transparency(png_path):
     try:
         img = Image.open(png_path)
@@ -98,41 +95,7 @@ def trim_transparency(png_path):
     except Exception as e:
         print(f"An error occurred: {e}")
 
-def create_xml(output_xml_path, padding, images_info,  generated_width, generated_height):
-    annotation = ET.Element('annotation')
-    
-    # Add folder and filename elements
-    ET.SubElement(annotation, 'folder').text = 'images'
-    ET.SubElement(annotation, 'filename').text = os.path.basename(output_xml_path).replace('.xml', '.png')
 
-    # Add size element
-    size = ET.SubElement(annotation, 'size')
-    ET.SubElement(size, 'width').text = str(generated_width)
-    ET.SubElement(size, 'height').text = str(generated_height)
-    ET.SubElement(size, 'depth').text = '3'
-
-    for category_name, img_path, position, size in images_info:
-        object_elem = ET.SubElement(annotation, 'object')
-
-        ET.SubElement(object_elem, 'name').text = category_name
-        ET.SubElement(object_elem, 'pose').text = 'Unspecified'
-        ET.SubElement(object_elem, 'truncated').text = '0'
-        ET.SubElement(object_elem, 'occluded').text = '0'
-        ET.SubElement(object_elem, 'difficult').text = '0'
-
-        bndbox = ET.SubElement(object_elem, 'bndbox')
-        x_offset, y_offset = position
-        img_width, img_height = size
-
-        ET.SubElement(bndbox, 'xmin').text = str(x_offset)
-        ET.SubElement(bndbox, 'ymin').text = str(y_offset)
-        ET.SubElement(bndbox, 'xmax').text = str(x_offset + img_width)
-        ET.SubElement(bndbox, 'ymax').text = str(y_offset + img_height)
-
-    # Write the tree to an XML file
-    tree = ET.ElementTree(annotation)
-    tree.write(output_xml_path)
-    
         
 def generateDataFromSVG(categories, generated_count, generated_width, generated_height):
     outputDir = "output/generated"
@@ -181,7 +144,7 @@ def generateDataFromSVG(categories, generated_count, generated_width, generated_
         
         combine_images(output_png_path, images_info, generated_width, generated_height)
         
-        create_xml( output_xml_path, padding, images_info,  generated_width, generated_height )
+        create_xml( output_xml_path, padding, images_info )
 
         delete_temp_images(images_info)        
         

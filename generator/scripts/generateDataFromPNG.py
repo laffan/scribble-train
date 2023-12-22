@@ -1,20 +1,27 @@
-from PIL import Image, ImageDraw, ImageOps
 import os
+import json
 import random
+from PIL import Image, ImageDraw, ImageOps
+from scripts.generateAnnotation import generateAnnotation
 
-def generateDataFromPNG(categories, generated_count, generated_width, generated_height):
-    outputDir = "output/generated"
-    # Ensure the output directory exists
-    if not os.path.exists(outputDir):
-        os.makedirs(outputDir)
+with open('config.json', 'r') as f:
+    config = json.load(f)
 
-    padding = 100  # Padding on all sides
-    effective_width = generated_width - 2 * padding
-    effective_height = generated_width - 2 * padding
+def generateDataFromPNG(categories, isValidationPass=False ):
+  
+    print("IS THIS THE FALIDATION PASS", isValidationPass)
+    
+    padding = config["output"]["padding"]  # Padding on all sides
+    effective_width = config['output']['width'] - 2 * padding
+    effective_height = config['output']['height'] - 2 * padding
 
-    for img_num in range(generated_count):
+    for img_num in range(config['output']['count']):
+      
+        images_info = []
+        print ("Generating image", img_num)
+        output_filename = f'img_{img_num}'
         # Create a white canvas
-        canvas = Image.new('RGBA', (generated_width, generated_height), 'white')
+        canvas = Image.new('RGBA', (config['output']['width'], config['output']['height']), 'white')
 
         # Decide how many shapes to use in this image (3 to 10)
         num_shapes = random.randint(3, 6)
@@ -38,13 +45,9 @@ def generateDataFromPNG(categories, generated_count, generated_width, generated_
             if shape.width > effective_width or shape.height > effective_height:
                 continue  # Skip this shape if it doesn't fit
 
-            # Random rotation
-            angle = random.randint(0, 360)
-            shape = shape.rotate(angle, expand=True)
-
             # Random position within the effective area
-            x_max = max(generated_width - shape.width - padding, padding)
-            y_max = max(generated_height - shape.height - padding, padding)
+            x_max = max(config['output']['width'] - shape.width - padding, padding)
+            y_max = max(config['output']['height'] - shape.height - padding, padding)
 
             # Ensure there's space to place the shape
             if x_max <= padding or y_max <= padding:
@@ -53,13 +56,36 @@ def generateDataFromPNG(categories, generated_count, generated_width, generated_
             x_offset = random.randint(padding, x_max)
             y_offset = random.randint(padding, y_max)
             
+            images_info.append(
+                {
+                 "className": category["className"], 
+                 "filename" : output_filename, 
+                 "offset": (x_offset, y_offset), 
+                 "size": ( new_size[0], new_size[1])
+                 }
+                )
+            
             # Overlay the shape onto the canvas
             canvas.paste(shape, (x_offset, y_offset), shape)
 
+
+        # Figure out output directories
+        validation_path = ("validate" if isValidationPass else "train")
+        
+        output_dir = os.path.join(config["paths"]["generated"], (validation_path if config["options"]["includeValidationSet"] else ""))
+        
+        output_img_dir = os.path.join(output_dir, ("images" if config["options"]["separateAnnotationFolder"] else ""))
+        
+        output_xml_dir = os.path.join(output_dir, ("annotations" if config["options"]["separateAnnotationFolder"] else ""))
+
+        # Save the annotation
+        generateAnnotation( images_info, output_xml_dir )
+
+        # Ensure the output directory exists
+        if not os.path.exists(output_img_dir):
+            os.makedirs(output_img_dir)
+        
         # Save the generated image
         canvas = canvas.convert("RGB")  # Convert to RGB if saving as JPEG
-        canvas.save(os.path.join(outputDir, f'img_{img_num}.jpg'))
+        canvas.save(os.path.join(output_img_dir, f'{output_filename}.jpg'))
 
-# Example usage
-# categories = [...] # Your categories data
-# generateData(categories, 'path_to_generated_data_directory', 30, 800, 600)

@@ -1,0 +1,23 @@
+{
+  "formats": {
+    "input": "png",
+    "output": "jpg"
+  },
+  "paths": {
+    "input": "input/sheets/",
+    "shapes": "output/shapes/",
+    "generated": "output/generated/"
+  },
+  "output": {
+    "count": 5,
+    "width": 250,
+    "height": 250,
+    "padding": 10,
+    "shape_scale_min": 1,
+    "shape_scale_max": 2
+  },
+  "options": {
+    "separateAnnotationFolder": true,
+    "includeValidationSet": true
+  }
+}

@@ -1,3 +1,4 @@
+![scribble-train](icon.jpg)
 # scribble train
 
 Create tensor lite trainings sets from sheets of shapes.  (Created with macOS, but should work anywhere.)
