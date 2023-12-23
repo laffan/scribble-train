@@ -20,7 +20,7 @@ def scalePath(d_attr, scale_factor):
 
     
 def scaleSVG(input_svg, output_svg):
-    scale_factor = random.uniform(5, 6)  # Randomly scale the shape
+    scale_factor = random.uniform(config["output"]["scale"][0], config["output"]["scale"][1])  # Randomly scale the shape
     max_width = config["output"]["width"]
     max_height = config["output"]["height"]
     

@@ -6,10 +6,9 @@ To be used in conjunction with [this tutorial video](https://www.youtube.com/wat
 
 ## Installation
 
-SVG manipulation depends on Inkscape. Getting it up and running on macOS 
+SVG manipulation depends on [Inkscape](https://inkscape.org/). Once installed, make sure the executable is registered in config.json.
 
-
-
+[TODO : Move cairo functionality over to Inkscape.]
 
 `brew install cairo`
 
@@ -22,6 +21,8 @@ Then
 `pip3 install opencv-python et-xmlfile cairosvg`
 
 
-## Currently
+## File Preparation
 
-- 🚨🚨🚨 Adding SVG support, but *keep the raster version*. Will be useful for other projects.
+PNG shape sheets should be have a transparent background with space between the shapes.
+
+SVG shape sheets should have all lines associated with a single shape grouped.

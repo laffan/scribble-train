@@ -19,21 +19,17 @@ def generateDataFromSVG(categories, isValidationPass=False ):
     if not os.path.exists(config["paths"]["generated"]):
         os.makedirs(config["paths"]["generated"])
 
-    padding = config["output"]["padding"]
-    effective_width = config["output"]["width"] - 2 * config["output"]["padding"]
-    effective_height = config["output"]["height"] - 2 * config["output"]["padding"]
-
     for img_num in range(config["output"]["count"]):
         tempFileList = []
         print ("Generating image", img_num)
         output_filename = f'img_{img_num}'
         images_info = []  # To store info about each image to combine
+        canvas = Image.new('RGBA', (config['output']['width'], config['output']['height']), 'white')
 
         for _ in range(random.randint(3, 6)):  # Decide how many shapes to use in this image
             selectedCategory = random.choice(categories)
             original_svg = random.choice(selectedCategory['images'])  # Select a random SVG path
 
-            canvas = Image.new('RGBA', (config['output']['width'], config['output']['height']), 'white')
 
             scaled_svg = os.path.join(config["paths"]["generated"], f'scaled_{selectedCategory["className"]}_{img_num}_{_}.svg')
             
@@ -50,8 +46,8 @@ def generateDataFromSVG(categories, isValidationPass=False ):
                 trimTransparency(png_path) # Remove transparent pixels
 
                 # # Random rotation and position
-                x_offset = random.randint(padding, effective_width)
-                y_offset = random.randint(padding, effective_height)
+                x_offset = random.randint(0, config["output"]["width"] - config["output"]["padding"] )
+                y_offset = random.randint(0, config["output"]["height"] - config["output"]["padding"])
                 width, height = Image.open(png_path).size
 
                 # images_info.append(( category_name, png_path, (x_offset, y_offset), ( width, height)))
@@ -100,11 +96,11 @@ def generateDataFromSVG(categories, isValidationPass=False ):
         canvas = canvas.convert("RGB")  # Convert to RGB if saving as JPEG
         canvas.save(os.path.join(output_img_dir, f'{output_filename}.jpg'))
 
-        # # Remove temp files
-        # for file_path in tempFileList:
-        #     try:
-        #         os.remove(file_path)e
-        #     except FileNotFoundError:
-        #         print(f"File {file_path} was not found")
-        #     except Exception as e:
-        #         print(f"An error occurred: {e}")
+        # Remove temp files
+        for file_path in tempFileList:
+            try:
+                os.remove(file_path)
+            except FileNotFoundError:
+                print(f"File {file_path} was not found")
+            except Exception as e:
+                print(f"An error occurred: {e}")
