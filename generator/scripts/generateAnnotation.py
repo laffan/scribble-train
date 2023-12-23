@@ -25,7 +25,7 @@ def generateAnnotation(images_info, output_xml_dir):
 
     annotation = ET.Element('annotation')
     ET.SubElement(annotation, 'folder').text = 'images'
-    ET.SubElement(annotation, 'filename').text = filename  # Using the filename from images_info
+    ET.SubElement(annotation, 'filename').text = filename + "." + config["formats"]["output"]  # Using the filename from images_info
 
     # Add size element
     size = ET.SubElement(annotation, 'size')

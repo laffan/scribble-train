@@ -26,3 +26,8 @@ Then
 PNG shape sheets should be have a transparent background with space between the shapes.
 
 SVG shape sheets should have all lines associated with a single shape grouped.
+
+
+## Usage
+
+Once you have prepared your files (I keep them in `input/sheets/filetype`) edit config.json to match your requirements.  Then first run `python init.py extract` to get individual shapes from the sheets, followed by `python init.py generate` to generate the training set.

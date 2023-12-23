@@ -10,7 +10,7 @@
     "inkscape": "/Applications/Inkscape.app/Contents/MacOS/inkscape"
   },
   "output": {
-    "count": 2,
+    "count": 300,
     "width": 250,
     "height": 250,
     "scale": [0.4, 0.8],
@@ -18,6 +18,6 @@
   },
   "options": {
     "separateAnnotationFolder": true,
-    "includeValidationSet": false
+    "includeValidationSet": true
   }
 }
