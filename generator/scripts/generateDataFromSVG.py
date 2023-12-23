@@ -7,6 +7,7 @@ from scripts.generateAnnotation import generateAnnotation
 from scripts.svgUtils.scaleSVG import scaleSVG 
 from scripts.svgUtils.setSVGStroke import setSVGStroke 
 from scripts.svgUtils.rasterizeSVG import rasterizeSVG 
+from scripts.svgUtils.moveSVGToOrigin import moveSVGToOrigin 
 from scripts.pngUtils.trimTransparency import trimTransparency 
 
 with open('config.json', 'r') as f:
@@ -30,21 +31,22 @@ def generateDataFromSVG(categories, isValidationPass=False ):
 
         for _ in range(random.randint(3, 6)):  # Decide how many shapes to use in this image
             selectedCategory = random.choice(categories)
-            svg_path = random.choice(selectedCategory['images'])  # Select a random SVG path
+            original_svg = random.choice(selectedCategory['images'])  # Select a random SVG path
 
             canvas = Image.new('RGBA', (config['output']['width'], config['output']['height']), 'white')
 
-            scaled_svg_path = os.path.join(config["paths"]["generated"], f'scaled_{img_num}_{_}.svg')
-            png_path = os.path.join(config["paths"]["generated"], f'rasterized_{img_num}_{_}.png')
+            scaled_svg = os.path.join(config["paths"]["generated"], f'scaled_{selectedCategory["className"]}_{img_num}_{_}.svg')
             
-            tempFileList.append(scaled_svg_path)
+            png_path = os.path.join(config["paths"]["generated"], f'rasterized_{selectedCategory["className"]}_{img_num}_{_}.png')
+            
+            tempFileList.append(scaled_svg)
             tempFileList.append(png_path)
 
-            scale_factor = random.uniform(.5, 3)  # Randomly scale the shape
             try:
-                scaleSVG(svg_path, scaled_svg_path, scale_factor) # scale
-                setSVGStroke( scaled_svg_path ) # set stroke and color
-                rasterizeSVG(scaled_svg_path, png_path) # rasterize svg
+                scaleSVG(original_svg, scaled_svg) # scale
+                moveSVGToOrigin(scaled_svg)
+                setSVGStroke( scaled_svg ) # set stroke and color
+                rasterizeSVG(scaled_svg, png_path) # rasterize svg
                 trimTransparency(png_path) # Remove transparent pixels
 
                 # # Random rotation and position
@@ -98,11 +100,11 @@ def generateDataFromSVG(categories, isValidationPass=False ):
         canvas = canvas.convert("RGB")  # Convert to RGB if saving as JPEG
         canvas.save(os.path.join(output_img_dir, f'{output_filename}.jpg'))
 
-        # Remove temp files
-        for file_path in tempFileList:
-            try:
-                os.remove(file_path)
-            except FileNotFoundError:
-                print(f"File {file_path} was not found")
-            except Exception as e:
-                print(f"An error occurred: {e}")
+        # # Remove temp files
+        # for file_path in tempFileList:
+        #     try:
+        #         os.remove(file_path)e
+        #     except FileNotFoundError:
+        #         print(f"File {file_path} was not found")
+        #     except Exception as e:
+        #         print(f"An error occurred: {e}")

@@ -12,8 +12,8 @@ def rasterizeSVG(svg_path, img_output_path):
         tree = ET.parse(svg_path)
         root = tree.getroot()
 
-        # Set a large viewBox
-        root.set('viewBox', '0 0 4000 4000')
+        # # Set a large viewBox
+        # root.set('viewBox', '0 0 4000 4000')
 
         # Save the modified SVG temporarily
         temp_svg_path = 'temp.svg'

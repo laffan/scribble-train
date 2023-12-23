@@ -6,6 +6,11 @@ To be used in conjunction with [this tutorial video](https://www.youtube.com/wat
 
 ## Installation
 
+SVG manipulation depends on Inkscape. Getting it up and running on macOS 
+
+
+
+
 `brew install cairo`
 
 (If you run in to a "can't find cairo" error, you may need to run the following : )

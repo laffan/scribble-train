@@ -6,10 +6,11 @@
   "paths": {
     "input": "input/sheets/",
     "shapes": "output/shapes/",
-    "generated": "output/generated/"
+    "generated": "output/generated/",
+    "inkscape": "/Applications/Inkscape.app/Contents/MacOS/inkscape"
   },
   "output": {
-    "count": 5,
+    "count": 2,
     "width": 250,
     "height": 250,
     "padding": 10,
@@ -17,7 +18,7 @@
     "shape_scale_max": 2
   },
   "options": {
-    "separateAnnotationFolder": true,
+    "separateAnnotationFolder": false,
     "includeValidationSet": false
   }
 }

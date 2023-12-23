@@ -1,6 +1,7 @@
 import os
 import json
 import xml.etree.ElementTree as ET
+from scripts.svgUtils.moveSVGToOrigin import moveSVGToOrigin
 
 with open('config.json', 'r') as f:
     config = json.load(f)
@@ -36,6 +37,9 @@ def extractShapesFromSVG( filename ):
             output_path = os.path.join(shapesDir, filename,  f'shape_{shape_count}.svg')
             with open(output_path, 'wb') as file:
                 file.write(ET.tostring(new_svg))
+            
+            
+            moveSVGToOrigin(output_path)
 
             shape_count += 1
 
