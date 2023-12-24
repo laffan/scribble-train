@@ -1,23 +1,11 @@
 ![scribble-train](icon.jpg)
 # scribble train
 
-Create tensor lite trainings sets from sheets of shapes.  (Created with macOS, but should work anywhere.)
+Tools to train a TensorFlow Lite model with a sheet of hand drawn symbols.  (Created with macOS, but should work anywhere.)
 
-To be used in conjunction with [this tutorial video](https://www.youtube.com/watch?v=kjuStyfl6yk) and [this collab notebook](https://colab.research.google.com/github/khanhlvg/tflite_raspberry_pi/blob/main/object_detection/Train_custom_model_tutorial.ipynb)
+Inspired by and (somewhat) to be used in conjunction with [this tutorial](https://www.youtube.com/watch?v=kjuStyfl6yk). Fuller documentation about the process from TensorFlow itself [here](https://www.tensorflow.org/lite/models/modify/model_maker/object_detection).
 
-## Installation
+## Instructions
 
-`brew install cairo`
-
-(If you run in to a "can't find cairo" error, you may need to run the following : )
-
-`sudo cp /opt/homebrew/Cellar/cairo/{YOUR CAIRO VERSION}/lib/libcairo.2.dylib /usr/local/lib`
-
-Then 
-
-`pip3 install opencv-python et-xmlfile cairosvg`
-
-
-## Currently
-
-- 🚨🚨🚨 Adding SVG support, but *keep the raster version*. Will be useful for other projects.
+- [generator README](generate/README.md)
+- [training README](train/README.md)
